@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace-manifest.json",
+  "name": "linkedin-writing",
+  "owner": {
+    "name": "shwetankg07",
+    "url": "https://github.com/shwetankg07"
+  },
+  "description": "Install writing-linkedin-posts as a Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "writing-linkedin-posts",
+      "source": "./",
+      "description": "Write LinkedIn posts that sound like the person who built the thing, with a checker for hype words, emoji and links in the body.",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": [
+        "linkedin",
+        "writing",
+        "social-media",
+        "build-in-public"
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Lint a LinkedIn post draft. Usage: python3 check.py post.txt [more.txt ...]
 Exits 1 if any file has an error. Run with --selftest to check the checker."""
+import pathlib
 import re
 import sys
 
@@ -14,15 +15,30 @@ HYPE = [
     "robust", "leverage", "delve", "unlock", "empower", "blazing", "supercharge",
     "journey", "passionate", "let that sink in", "agree?", "thoughts?", "in today's",
     "here's the thing", "not just", "it's not about",
-    "cto",  # voice.md: the author doesn't use the title
 ]
 URL = re.compile(r"https?://|www\.", re.I)
 DOMAIN = re.compile(r"\b[\w-]+\.(com|dev|io|app|site|in|online|org)\b(/|\s|$)", re.I)
 EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
 
 
-def check(text):
-    """Return (errors, warnings) as lists of strings."""
+def banned(voice_text):
+    """Words listed under "## Banned words" in a voice file, lowercased."""
+    m = re.search(r"^## Banned words\n(.*?)(?=^## |\Z)", voice_text, re.M | re.S)
+    lines = m.group(1).splitlines() if m else []
+    return [l[2:].strip().strip('"`').lower() for l in lines if l.startswith("- ")]
+
+
+def voice_words():
+    """Banned words from voice.local.md, or voice.md when there is no local file."""
+    here = pathlib.Path(__file__).parent
+    for name in ("voice.local.md", "voice.md"):
+        if (here / name).exists():
+            return banned((here / name).read_text(encoding="utf-8"))
+    return []
+
+
+def check(text, extra=()):
+    """Return (errors, warnings) as lists of strings. extra: more words to warn on."""
     errors, warnings = [], []
     lines = text.splitlines()
     cut = next((i for i, l in enumerate(lines) if SEPARATOR in l.lower()), len(lines))
@@ -52,7 +68,7 @@ def check(text):
             warnings.append(f"line {n}: em dash")
         if line.count(";") >= 2:
             warnings.append(f"line {n}: semicolon chain")
-        for w in HYPE:
+        for w in [*HYPE, *extra]:
             if re.search(r"(?<!\w)" + re.escape(w) + r"(?!\w)", low):
                 warnings.append(f"line {n}: '{w}'")
     return errors, warnings
@@ -65,7 +81,10 @@ def selftest():
     errors, warnings = check(bad)
     assert len(errors) == 2 and any("link" in e for e in errors), errors
     assert {"hashtag", "emoji", "'thrilled'"} <= {w.split(": ")[-1] for w in warnings}, warnings
-    assert check("our CTO said\n")[1] and not check("an octopus\n")[1]
+    assert check("our CTO said\n", ["cto"])[1] and not check("an octopus\n", ["cto"])[1]
+    assert not check("our CTO said\n")[1]
+    assert banned("## Banned words\n\n- CTO\n- `synergy`\n## Next\n- no\n") == ["cto", "synergy"]
+    assert banned("# no list\n") == []
     assert check("see deps.dev\n") == ([], ["line 1: bare domain, LinkedIn may turn it into a link"])
     assert "hook opens with a question" in check("Ever wondered why?\n")[1]
     assert "hook opens with a question" not in check(good)[1]
@@ -79,8 +98,9 @@ if __name__ == "__main__":
     if not sys.argv[1:]:
         sys.exit(__doc__)
     failed = False
+    words = voice_words()
     for path in sys.argv[1:]:
-        errors, warnings = check(open(path, encoding="utf-8").read())
+        errors, warnings = check(open(path, encoding="utf-8").read(), words)
         for kind, items in (("error", errors), ("warn", warnings)):
             for item in items:
                 print(f"{path}: {kind}: {item}")

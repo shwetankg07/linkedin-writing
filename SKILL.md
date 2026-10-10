@@ -9,7 +9,7 @@ description: Use when drafting, rewriting, or reviewing a LinkedIn post, especia
 
 A good post reads like the person who built the thing explaining it to a smart friend. It opens on a concrete fact, tells one real story (the hard part, the finding, the mistake) and gets out. Every claim can be checked.
 
-**Before writing, read `voice.md`.** It holds the author's personal rules, and it overrides this file.
+**Before writing, read `voice.local.md` if it exists, otherwise `voice.md`.** It holds the author's personal rules, and it overrides this file. If it is still the blank template, write in plain neutral English and ask before inventing anything personal.
 
 ## Gather facts first
 

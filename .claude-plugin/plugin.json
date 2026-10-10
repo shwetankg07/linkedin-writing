@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "writing-linkedin-posts",
+  "description": "Write LinkedIn posts that sound like the person who built the thing: a two-line hook, one real story, links in the first comment, and a checker that catches hype words, emoji and links in the body.",
+  "version": "1.0.0",
+  "author": {
+    "name": "shwetankg07",
+    "url": "https://github.com/shwetankg07"
+  },
+  "homepage": "https://github.com/shwetankg07/linkedin-writing",
+  "repository": "https://github.com/shwetankg07/linkedin-writing",
+  "license": "MIT",
+  "keywords": [
+    "linkedin",
+    "writing",
+    "social-media",
+    "build-in-public",
+    "developer-marketing"
+  ],
+  "skills": [
+    "./"
+  ]
+}

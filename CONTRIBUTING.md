@@ -19,4 +19,4 @@ python3 check.py examples/*.txt
 
 Both should finish with no errors. `check.py` uses only the Python standard library, so please keep it that way.
 
-`voice.md` holds my personal rules. To change how the skill writes for everyone, edit `SKILL.md`. If you want your own voice, fork the repo and replace `voice.md`.
+`voice.md` is a blank template for each user's own rules; mine are in `examples/voice-shwetank.md`. To change how the skill writes for everyone, edit `SKILL.md`. Don't commit a filled-in `voice.md` or a `voice.local.md`.
